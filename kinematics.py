@@ -1,5 +1,6 @@
 #solver which plots the trajectory of a 1d particle with intial parameters like u and h given
 import matplotlib.pyplot as plt
+import numpy as np
 def solvequadratic(a,b,c):
     disc = b**2-4*a*c
     if disc<0:
@@ -20,27 +21,25 @@ v = (u**2+2*g*h)**0.5
 peak_time = u/g
 peak_height = h+(u**2/(2*g))
 result = solvequadratic(0.5*g,-u,-h)
-heights = []
-times = []
-t=0.00
+
 if len(result) == 0:
     print("situation physically impossible")
 else:
-    while t<=max(result):
-        Y = h + u*t - 0.5*g*t*t
-        heights.append(Y)
-        times.append(t)
-        t += 0.1
-    times.append(max(result))
-    heights.append(0)
+    times = np.linspace(0,max(result),10000)
+    height = h+u*times-0.5*g*(times**2)
     
-    plt.plot(times,heights)
+    plt.plot(times,height)
     plt.xlabel("Time in s")
     plt.ylabel("Height in m")
-    plt.scatter(u/g,h+(u**2/(2*g)),color = "Red",label="max height")
+    if u>0:
+        plt.scatter(peak_time,peak_height,color = "Red",label="max height")
+        plt.text(peak_time,peak_height,f"max height = {peak_height:.2f}",ha="center",va="bottom")
+    else:
+        plt.scatter(0,h,color="Red",label="max height")
+        plt.text(0,h,f"max height = {h:.2f}",ha="left",va="bottom")
+    
     plt.scatter(max(result),0,color="Red",label="time of flight")
-    plt.text(peak_time,peak_height+0.01,f"max height = {peak_height:.2f}",ha="right",va="bottom")
-    plt.text(max(result)-0.1,0,f"time of flight = {max(result):.2f}",ha="right",va="bottom")
+    plt.text(max(result),0,f"time of flight = {max(result):.2f}",ha="right",va="bottom") 
     plt.show()
 
 
